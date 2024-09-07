@@ -8,7 +8,7 @@ function App() {
   const [searchHistory, setSearchHistory] = useState([]); // new state to store search history
 
   const apiKey = "06f6d5234ea441798ed112304240609";
-  const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${input}&aqi=yes`;
+  const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${input}&aqi=yes`;
 
   useEffect(() => {
     if (input && input.length >= 50 && !loading) {
@@ -16,8 +16,9 @@ function App() {
         .then((response) => response.json())
         .then((data) => {
           setWeatherData(data);
-          setSearchHistory((prevHistory) => [...prevHistory, data].reverse()); // add new search to end of array
+          setSearchHistory((prevHistory) => [data, ...prevHistory]); // add new search to end of array
           setLoading(false); // Set loading to false on success
+          setInput("");
         })
         .catch((error) => {
           setError(error.message);
@@ -38,8 +39,9 @@ function App() {
         .then((response) => response.json())
         .then((data) => {
           setWeatherData(data);
-          setSearchHistory((prevHistory) => [...prevHistory, data]); // add new search to history
+          setSearchHistory((prevHistory) => [data, ...prevHistory]); // add new search to history
           setLoading(false); // Set loading to false on success
+          setInput("");
         })
         .catch((error) => {
           setError(error.message);
@@ -49,7 +51,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="display">
       <h1>Weather App</h1>
       <form onSubmit={handleSubmit}>
         <input
@@ -68,8 +70,9 @@ function App() {
             <div key={index} className="card">
               <h2>Current Weather in {weather.location.name}</h2>
               <img
-                src={`http:${weather.current.condition.icon}`}
+                src={`https:${weather.current.condition.icon}`}
                 alt={weather.current.condition.text}
+                className="w-8 h-8 mx-auto" // Add Tailwind classes here
               />
               <p>Temperature: {weather.current.temp_C}°C</p>
               <p>Condition: {weather.current.condition.text}</p>
